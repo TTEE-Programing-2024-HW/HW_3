@@ -1,0 +1,282 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+#define PASSWORD "2024"
+#define MAX_TRIES 3
+#define SEAT_ROWS 9
+#define SEAT_COLS 9
+
+char seats[SEAT_ROWS][SEAT_COLS];
+
+// 初始化座位表，並隨機生成十個已預訂的座位
+void initializeSeats() {
+    memset(seats, '-', sizeof(seats));
+    srand(time(NULL));
+    int i;
+    for (i = 0; i < 10; ++i) {
+        int r, c;
+        do {
+            r = rand() % SEAT_ROWS;
+            c = rand() % SEAT_COLS;
+        } while (seats[r][c] == '*');
+        seats[r][c] = '*';
+    }
+}
+
+// 顯示座位表
+void displaySeats() {
+    printf("\\123456789\n");
+    int i,j;
+    for (i = 0; i < SEAT_ROWS; ++i) {
+        printf("%d", SEAT_ROWS - i);
+        for (j = 0; j < SEAT_COLS; ++j) {
+            printf("%c", seats[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+// 清除屏幕
+void clearScreen() {
+    system("clear || cls");
+}
+
+// 主選單
+void mainMenu() {
+    printf("----------[預約系統]----------\n");
+    printf("->  a. 可選座位               \n");
+    printf("->  b. 系統安排               \n");
+    printf("->  c. 自行選擇               \n");
+    printf("->  d. 結束                   \n");
+    printf("------------------------------\n");
+}
+
+// 檢查密碼
+int checkPassword() {
+    char input[10];
+    int tries;
+    for (tries = 0; tries < MAX_TRIES; ++tries) {
+        printf("輸入密碼: ");
+        scanf("%s", input);
+        if (strcmp(input, PASSWORD) == 0) {
+            printf("歡迎!\n");
+            return 1;
+        } else {
+            printf("密碼錯誤!還有%d次機會!\n",MAX_TRIES-tries-1);
+        }
+    }
+    printf("次數用盡,正在離開程式...\n");
+    return 0;
+}
+
+// 安排座位
+int arrangeSeats(int neededSeats) {
+    int found = 0;
+    int startRow = -1, startCol = -1;
+    int i,j,k;
+
+    if (neededSeats == 1 || neededSeats == 2 || neededSeats == 3) {
+        for (i = 0; i < SEAT_ROWS && !found; ++i) {
+            for (j = 0; j <= SEAT_COLS - neededSeats; ++j) {
+                int available = 1;
+                for (k = 0; k < neededSeats; ++k) {
+                    if (seats[i][j + k] != '-') {
+                        available = 0;
+                        break;
+                    }
+                }
+                if (available) {
+                    found = 1;
+                    startRow = i;
+                    startCol = j;
+                    break;
+                }
+            }
+        }
+    } else if (neededSeats == 4) {
+        for (i = 0; i < SEAT_ROWS && !found; ++i) {
+            for (j = 0; j <= SEAT_COLS - 4; ++j) {
+                int available = 1;
+                for (k = 0; k < 4; ++k) {
+                    if (seats[i][j + k] != '-') {
+                        available = 0;
+                        break;
+                    }
+                }
+                if (available) {
+                    found = 1;
+                    startRow = i;
+                    startCol = j;
+                    break;
+                }
+            }
+            if (!found && i < SEAT_ROWS - 1) {
+                for (j = 0; j < SEAT_COLS; ++j) {
+                    if (seats[i][j] == '-' && seats[i + 1][j] == '-') {
+                        found = 1;
+                        startRow = i;
+                        startCol = j;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    if (found) {
+        for (i = 0; i < neededSeats; ++i) {
+            if (neededSeats == 4 && startCol == -1) {
+                seats[startRow][startCol + i] = '@';
+                if (i == 1) startRow++;
+            } else {
+                seats[startRow][startCol + i] = '@';
+            }
+        }
+        displaySeats();
+        char response;
+        printf("您確定要這個座位嗎? (y/n): ");
+        scanf(" %c", &response);
+        if (response == 'y' || response == 'Y') {
+            for (i = 0; i < SEAT_ROWS; ++i) {
+                for (j = 0; j < SEAT_COLS; ++j) {
+                    if (seats[i][j] == '@') {
+                        seats[i][j] = '*';
+                    }
+                }
+            }
+            return 1;
+        } else{
+        	for (i = 0; i < SEAT_ROWS; ++i) {
+                for (j = 0; j < SEAT_COLS; ++j) {
+                    if (seats[i][j] == '@') {
+                        seats[i][j] = '-';
+                        }
+                }
+            }
+            return 0;
+        }
+    } else{
+        printf("抱歉，沒有可安排的座位。\n");
+        return 0;
+    }
+}
+
+// 使用者自行選擇座位
+int chooseSeats(int seatCount) {
+    int row, col, i, j;
+    for (i = 0; i < seatCount; ++i) {
+        while (1) {
+            printf("輸入想要預定的座位（行-列） %d: ", i + 1);
+            scanf("%d-%d", &row, &col);
+            if (row >= 1 && row <= SEAT_ROWS && col >= 1 && col <= SEAT_COLS && seats[SEAT_ROWS - row][col - 1] == '-') {
+                seats[SEAT_ROWS - row][col - 1] = '@';
+                break;
+            } else {
+                printf("沒有此座位或是此座位已被預訂,請再輸入一次\n");
+            }
+        }
+    }
+    displaySeats();
+    char response;
+    printf("如果選擇完畢請按任意鍵以繼續...\n");
+    getchar();
+    getchar();
+    for (i = 0; i < SEAT_ROWS; ++i) {
+        for (j = 0; j < SEAT_COLS; ++j) {
+            if (seats[i][j] == '@') {
+                seats[i][j] = '*';
+            }
+        }
+    }
+    return 1;
+}
+
+// 主程式
+int main() {
+	
+	printf("*                  \n");
+    printf("**                 \n");
+    printf("***                \n");
+    printf("****               \n");
+    printf("*****              \n");
+    printf(" *****             \n");
+    printf("  *****            \n");
+    printf("   *****           \n");
+    printf("    *****          \n");
+    printf("     *****         \n");
+    printf("      *****        \n");
+    printf("       *****       \n");
+    printf("        *****      \n");
+    printf("         *****     \n");
+    printf("          *****    \n");
+    printf("           *****   \n");
+    printf("            *****  \n");
+    printf("             ***** \n");
+    printf("              *****\n");
+    printf("               ****\n");
+    printf("                ***\n");
+    printf("                 **\n");
+    printf("                  *\n");
+    if (!checkPassword()) return 0;
+
+    initializeSeats();
+    char choice;
+    while (1) {
+        clearScreen();
+        mainMenu();
+        scanf(" %c", &choice);
+        clearScreen();
+
+        switch (choice) {
+            case 'a':
+                displaySeats();
+                printf("按任意鍵以回到主選單...\n");
+                getchar();
+                getchar();
+                break;
+            case 'b': {
+                int neededSeats;
+                printf("您需要預定幾個座位(1~4)? ");
+                scanf("%d", &neededSeats);
+                if (neededSeats < 1 || neededSeats > 4) {
+                    printf("輸入錯誤,正在返回主選單...\n");
+                } else {
+                    if (!arrangeSeats(neededSeats)) {
+                        printf("正在返回主選單...\n");
+                    }
+                }
+                break;
+            }
+            case 'c': {
+                int seatCount;
+                printf("您需要預定幾個座位(1~4)? ");
+                scanf("%d", &seatCount);
+                if (seatCount < 1 || seatCount > 4) {
+                    printf("輸入錯誤,正在返回主選單...\n");
+                } else {
+                    chooseSeats(seatCount);
+                }
+                break;
+            }
+            case 'd': {
+                char response;
+                printf("確定要離開? (y/n): ");
+                scanf(" %c", &response);
+                if (response == 'n' || response == 'N') {
+                    return 0;
+                } else if (response != 'y' && response != 'Y') {
+                    printf("輸入錯誤,正在返回主選單...\n");
+                }
+                break;
+            }
+            default:
+                printf("輸入錯誤,正在返回主選單...\n");
+        }
+    }
+
+    return 0;
+}
+
+
