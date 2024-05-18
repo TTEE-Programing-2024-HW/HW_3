@@ -10,7 +10,7 @@
 
 char seats[SEAT_ROWS][SEAT_COLS];
 
-// ªì©l¤Æ®y¦ìªí¡A¨ÃÀH¾÷¥Í¦¨¤Q­Ó¤w¹w­qªº®y¦ì
+// åˆå§‹åŒ–åº§ä½è¡¨ï¼Œä¸¦éš¨æ©Ÿç”Ÿæˆåå€‹å·²é è¨‚çš„åº§ä½
 void initializeSeats() {
     memset(seats, '-', sizeof(seats));
     srand(time(NULL));
@@ -25,7 +25,7 @@ void initializeSeats() {
     }
 }
 
-// Åã¥Ü®y¦ìªí
+// é¡¯ç¤ºåº§ä½è¡¨
 void displaySeats() {
     printf("\\123456789\n");
     int i,j;
@@ -38,40 +38,40 @@ void displaySeats() {
     }
 }
 
-// ²M°£«Ì¹õ
+// æ¸…é™¤å±å¹•
 void clearScreen() {
     system("clear || cls");
 }
 
-// ¥D¿ï³æ
+// ä¸»é¸å–®
 void mainMenu() {
-    printf("----------[¹w¬ù¨t²Î]----------\n");
-    printf("->  a. ¥i¿ï®y¦ì               \n");
-    printf("->  b. ¨t²Î¦w±Æ               \n");
-    printf("->  c. ¦Û¦æ¿ï¾Ü               \n");
-    printf("->  d. µ²§ô                   \n");
+    printf("----------[é ç´„ç³»çµ±]----------\n");
+    printf("->  a. å¯é¸åº§ä½               \n");
+    printf("->  b. ç³»çµ±å®‰æ’               \n");
+    printf("->  c. è‡ªè¡Œé¸æ“‡               \n");
+    printf("->  d. çµæŸ                   \n");
     printf("------------------------------\n");
 }
 
-// ÀË¬d±K½X
+// æª¢æŸ¥å¯†ç¢¼
 int checkPassword() {
     char input[10];
     int tries;
     for (tries = 0; tries < MAX_TRIES; ++tries) {
-        printf("¿é¤J±K½X: ");
+        printf("è¼¸å…¥å¯†ç¢¼: ");
         scanf("%s", input);
         if (strcmp(input, PASSWORD) == 0) {
-            printf("Åwªï!\n");
+            printf("æ­¡è¿!\n");
             return 1;
         } else {
-            printf("±K½X¿ù»~!ÁÙ¦³%d¦¸¾÷·|!\n",MAX_TRIES-tries-1);
+            printf("å¯†ç¢¼éŒ¯èª¤!é‚„æœ‰%dæ¬¡æ©Ÿæœƒ!\n",MAX_TRIES-tries-1);
         }
     }
-    printf("¦¸¼Æ¥ÎºÉ,¥¿¦bÂ÷¶}µ{¦¡...\n");
+    printf("æ¬¡æ•¸ç”¨ç›¡,æ­£åœ¨é›¢é–‹ç¨‹å¼...\n");
     return 0;
 }
 
-// ¦w±Æ®y¦ì
+// å®‰æ’åº§ä½
 int arrangeSeats(int neededSeats) {
     int found = 0;
     int startRow = -1, startCol = -1;
@@ -136,7 +136,7 @@ int arrangeSeats(int neededSeats) {
         }
         displaySeats();
         char response;
-        printf("±z½T©w­n³o­Ó®y¦ì¶Ü? (y/n): ");
+        printf("æ‚¨ç¢ºå®šè¦é€™å€‹åº§ä½å—? (y/n): ");
         scanf(" %c", &response);
         if (response == 'y' || response == 'Y') {
             for (i = 0; i < SEAT_ROWS; ++i) {
@@ -158,29 +158,29 @@ int arrangeSeats(int neededSeats) {
             return 0;
         }
     } else{
-        printf("©êºp¡A¨S¦³¥i¦w±Æªº®y¦ì¡C\n");
+        printf("æŠ±æ­‰ï¼Œæ²’æœ‰å¯å®‰æ’çš„åº§ä½ã€‚\n");
         return 0;
     }
 }
 
-// ¨Ï¥ÎªÌ¦Û¦æ¿ï¾Ü®y¦ì
+// ä½¿ç”¨è€…è‡ªè¡Œé¸æ“‡åº§ä½
 int chooseSeats(int seatCount) {
     int row, col, i, j;
     for (i = 0; i < seatCount; ++i) {
         while (1) {
-            printf("¿é¤J·Q­n¹w©wªº®y¦ì¡]¦æ-¦C¡^ %d: ", i + 1);
+            printf("è¼¸å…¥æƒ³è¦é å®šçš„åº§ä½ï¼ˆè¡Œ-åˆ—ï¼‰ %d: ", i + 1);
             scanf("%d-%d", &row, &col);
             if (row >= 1 && row <= SEAT_ROWS && col >= 1 && col <= SEAT_COLS && seats[SEAT_ROWS - row][col - 1] == '-') {
                 seats[SEAT_ROWS - row][col - 1] = '@';
                 break;
             } else {
-                printf("¨S¦³¦¹®y¦ì©Î¬O¦¹®y¦ì¤w³Q¹w­q,½Ğ¦A¿é¤J¤@¦¸\n");
+                printf("æ²’æœ‰æ­¤åº§ä½æˆ–æ˜¯æ­¤åº§ä½å·²è¢«é è¨‚,è«‹å†è¼¸å…¥ä¸€æ¬¡\n");
             }
         }
     }
     displaySeats();
     char response;
-    printf("¦pªG¿ï¾Ü§¹²¦½Ğ«ö¥ô·NÁä¥HÄ~Äò...\n");
+    printf("å¦‚æœé¸æ“‡å®Œç•¢è«‹æŒ‰ä»»æ„éµä»¥ç¹¼çºŒ...\n");
     getchar();
     getchar();
     for (i = 0; i < SEAT_ROWS; ++i) {
@@ -193,7 +193,7 @@ int chooseSeats(int seatCount) {
     return 1;
 }
 
-// ¥Dµ{¦¡
+// ä¸»ç¨‹å¼
 int main() {
 	
 	printf("*                  \n");
@@ -232,29 +232,29 @@ int main() {
         switch (choice) {
             case 'a':
                 displaySeats();
-                printf("«ö¥ô·NÁä¥H¦^¨ì¥D¿ï³æ...\n");
+                printf("æŒ‰ä»»æ„éµä»¥å›åˆ°ä¸»é¸å–®...\n");
                 getchar();
                 getchar();
                 break;
             case 'b': {
                 int neededSeats;
-                printf("±z»İ­n¹w©w´X­Ó®y¦ì(1~4)? ");
+                printf("æ‚¨éœ€è¦é å®šå¹¾å€‹åº§ä½(1~4)? ");
                 scanf("%d", &neededSeats);
                 if (neededSeats < 1 || neededSeats > 4) {
-                    printf("¿é¤J¿ù»~,¥¿¦bªğ¦^¥D¿ï³æ...\n");
+                    printf("è¼¸å…¥éŒ¯èª¤,æ­£åœ¨è¿”å›ä¸»é¸å–®...\n");
                 } else {
                     if (!arrangeSeats(neededSeats)) {
-                        printf("¥¿¦bªğ¦^¥D¿ï³æ...\n");
+                        printf("æ­£åœ¨è¿”å›ä¸»é¸å–®...\n");
                     }
                 }
                 break;
             }
             case 'c': {
                 int seatCount;
-                printf("±z»İ­n¹w©w´X­Ó®y¦ì(1~4)? ");
+                printf("æ‚¨éœ€è¦é å®šå¹¾å€‹åº§ä½(1~4)? ");
                 scanf("%d", &seatCount);
                 if (seatCount < 1 || seatCount > 4) {
-                    printf("¿é¤J¿ù»~,¥¿¦bªğ¦^¥D¿ï³æ...\n");
+                    printf("è¼¸å…¥éŒ¯èª¤,æ­£åœ¨è¿”å›ä¸»é¸å–®...\n");
                 } else {
                     chooseSeats(seatCount);
                 }
@@ -262,17 +262,17 @@ int main() {
             }
             case 'd': {
                 char response;
-                printf("½T©w­nÂ÷¶}? (y/n): ");
+                printf("ç¢ºå®šè¦é›¢é–‹? (y/n): ");
                 scanf(" %c", &response);
                 if (response == 'n' || response == 'N') {
                     return 0;
                 } else if (response != 'y' && response != 'Y') {
-                    printf("¿é¤J¿ù»~,¥¿¦bªğ¦^¥D¿ï³æ...\n");
+                    printf("è¼¸å…¥éŒ¯èª¤,æ­£åœ¨è¿”å›ä¸»é¸å–®...\n");
                 }
                 break;
             }
             default:
-                printf("¿é¤J¿ù»~,¥¿¦bªğ¦^¥D¿ï³æ...\n");
+                printf("è¼¸å…¥éŒ¯èª¤,æ­£åœ¨è¿”å›ä¸»é¸å–®...\n");
         }
     }
 
