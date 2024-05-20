@@ -1,0 +1,236 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define ROWS 9
+#define COLS 9
+#define PASSWORD 2024
+// 函數宣告
+void clear_screen();
+void display_menu();
+void display_seats(char seats[ROWS][COLS]); // 打印當前的座位狀態 
+void generate_random_booked_seats(char seats[ROWS][COLS], int booked_count);//隨機生成10個座位 
+void available_seats(char seats[ROWS][COLS]);//顯示當前的座位表
+void arrange_for_you(char seats[ROWS][COLS]);//自動安排座位
+void choose_by_yourself(char seats[ROWS][COLS]);//手動安排座位
+void exit_system();
+
+int main() {
+	int check_password();
+	 // 打印樹幹和樹冠會變成樹屋
+    printf("       *\n");
+    printf("      /|\\\n");
+    printf("     /_|_\\\n");
+    printf("    /__|__\\\n");
+    printf("   /___|___\\\n");
+    printf("     / | \\\n");
+    printf("    /  |  \\\n");
+    printf("   /   |   \\\n");
+    printf("  /____|____\\\n");
+    printf("   |   |   |\n");
+    printf("   |   |   |\n");
+    printf("   |___|___|\n");
+    printf("     |||||\n");
+    printf("   ~~~~~~~~\n");
+    // 印出一些個人風格的訊息
+    printf("\n歡迎來到我的樹屋！\n");
+    if (check_password() != 2024) {
+        return 0;  // 密碼錯誤結束程式
+    }
+    char seats[ROWS][COLS];
+    char choice;
+
+    // 初始化座位表
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            seats[i][j] = '-';
+        }
+    }
+
+    // 隨機預訂10個座位
+    generate_random_booked_seats(seats, 10);
+
+    while (1) {
+        clear_screen();
+        display_menu();
+        printf("請輸入你的選擇: ");
+        scanf(" %c", &choice);
+
+        switch (choice) {
+            case 'a':
+                available_seats(seats);
+                break;
+            case 'b':
+                arrange_for_you(seats);
+                break;
+            case 'c':
+                choose_by_yourself(seats);
+                break;
+            case 'd':
+                exit_system();
+                break;
+            default:
+                printf("無效的選擇。請重試。\n");
+                break;
+        }
+    }
+
+    return 0;
+}
+
+void clear_screen() {
+    // 清除螢幕 (依平台而定)
+    // system("clear"); // Unix/Linux
+    system("cls"); // Windows
+}
+
+void display_menu() {
+    printf("----------[訂票系統]----------\n");
+    printf("|  a. 查看可用座位           |\n");
+    printf("|  b. 自動為你安排座位       |\n");
+    printf("|  c. 自行選擇座位           |\n");
+    printf("|  d. 退出                   |\n");
+    printf("--------------------------------\n");
+}
+
+void display_seats(char seats[ROWS][COLS]) {
+    printf("\n");
+    for (int i = 0; i < ROWS; i++) {
+        printf("%d ", ROWS - i);  // 列數
+        for (int j = 0; j < COLS; j++) {
+            printf("%c ", seats[i][j]);
+        }
+        printf("\n");
+    }
+    printf("  ");
+    for (int j = 0; j < COLS; j++) {
+        printf("%d ", j + 1);  // 行數
+    }
+    printf("\n");
+}
+
+void generate_random_booked_seats(char seats[ROWS][COLS], int booked_count) {
+    srand(time(NULL));
+    for (int i = 0; i < booked_count; i++) {
+        int row, col;
+        do {
+            row = rand() % ROWS;
+            col = rand() % COLS;
+        } while (seats[row][col] == '*');
+        seats[row][col] = '*';
+    }
+}
+
+void available_seats(char seats[ROWS][COLS]) {
+    display_seats(seats);
+    printf("按任意鍵返回主選單...\n");
+    getchar();
+    getchar();
+}
+
+void arrange_for_you(char seats[ROWS][COLS]) {
+    int seat_count;
+    printf("你需要幾個座位（1-4）？ ");
+    scanf("%d", &seat_count);
+
+    if (seat_count < 1 || seat_count > 4) {
+        printf("無效的座位數量。返回主選單。\n");
+        return;
+    }
+
+    // 查找並建議座位
+    int found = 0;
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j <= COLS - seat_count; j++) {
+            int available = 1;
+            for (int k = 0; k < seat_count; k++) {
+                if (seats[i][j + k] != '-') {
+                    available = 0;
+                    break;
+                }
+            }
+            if (available) {
+                for (int k = 0; k < seat_count; k++) {
+                    seats[i][j + k] = '@';
+                }
+                found = 1;
+                break;
+            }
+        }
+        if (found) break;
+    }
+
+    if (!found) {
+        printf("沒有合適的座位。返回主選單。\n");
+        return;
+    }
+
+    display_seats(seats);
+    char satisfaction;
+    printf("你滿意這些座位嗎（y/n）？ ");
+    scanf(" %c", &satisfaction);
+
+    if (satisfaction == 'y') {
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (seats[i][j] == '@') {
+                    seats[i][j] = '*';
+                }
+            }
+        }
+    } else {
+        // 清除建議的座位
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (seats[i][j] == '@') {
+                    seats[i][j] = '-';
+                }
+            }
+        }
+    }
+}
+
+void choose_by_yourself(char seats[ROWS][COLS]) {
+    char input[10];
+    int row, col;
+
+    while (1) {
+        printf("請逐一輸入你的座位選擇（如1-2,2-9）：");
+        scanf("%s", input);
+        if (sscanf(input, "%d-%d", &row, &col) != 2 || row < 1 || row > ROWS || col < 1 || col > COLS || seats[row-1][col-1] == '*') {
+            printf("無效的座位選擇。請重試。\n");
+        } else {
+            seats[row-1][col-1] = '@';
+            break;
+        }
+    }
+
+    display_seats(seats);
+    printf("按任意鍵確認你的選擇並返回主選單...\n");
+    getchar();
+    getchar();
+
+    // 記錄選定的座位
+    for (int i = 0; i < ROWS; i++) {
+        for (int j = 0; j < COLS; j++) {
+            if (seats[i][j] == '@') {
+                seats[i][j] = '*';
+            }
+        }
+    }
+}
+
+void exit_system() {
+    char choice;
+    printf("繼續嗎？（y/n）：");
+    scanf(" %c", &choice);
+
+    if (choice == 'y') {
+        return;
+    } else if (choice == 'n') {
+        printf("退出系統。再見！\n");
+        exit(0);
+    } else {
+        printf("無效的輸入。返回主選單。\n");
+    }
+}
