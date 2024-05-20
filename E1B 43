@@ -1,0 +1,435 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>            
+#define col 10
+#define row 10
+#define no_seat 300
+
+void quetion5(int a[][col]);
+void q6_seat(int a[][col]);
+int  quetion7(void);
+void rev(int a[][col]);
+void fwd(int a[][col]);
+void seat(int a[][col]);               
+
+
+int main(void)
+{
+    char psw[5]="2024";
+	char en[5],etr;
+    int n=1,q6=0,ret=0,count=0;
+	int now_seat[row][col];     //設定密碼值 宣告陣列函數 
+	
+	
+
+do{
+		printf("輸入密碼:");
+		scanf("%s",en);
+		if(strcmp(psw,en)==0){
+		break;                             
+		}		
+			else if(n==3){
+			printf("Wrong %d Times!BYE~~~\n",n);
+				return 0;
+				}
+			else{			
+			printf("Wrong %d Time\n",n);
+			n++;
+			}                                  //用 do while 迴圈設定密碼 ,密碼錯超過三次會結束程式 
+				
+	}while(n<=3);	
+ puts("--------/ \__--\n");
+ puts("-------(    @\___--\n");
+ puts("-------/         O--\n");
+ puts("------/   (_____/--\n");
+ puts("-----/_____/   U--\n");
+ puts("----/        \  /--\n");
+ puts("---/__________\--\n");
+ puts("I'm E1B 43 Wang You Yu\n");
+ puts("-I'm E1B 43 Wang You Yu-\n");
+ puts("--I'm E1B 43 Wang You Yu--\n");
+ puts("---I'm E1B 43 Wang You Yu---\n");
+ puts("----/\_/\----------------\n");
+ puts("---( o.o )-----------------\n");
+ puts("----> ^ <------------------\n");
+ puts("---Wang You Yu-----\n");
+ puts("----Wang You Yu-----\n");
+ puts("-----Wang You Yu-----\n");
+ puts("-----------------/\_/\-------\n");
+ puts("----------------( o.o )------\n");
+ puts("-----------------> ^ <-------\n");
+
+ 
+                                                 //密碼正確  印出個人風格畫面 
+
+	now_seat[0][0]='/';
+	for(int fst_col=1,c=49;fst_col<=9;fst_col++,c++)
+		now_seat[0][fst_col]=c;
+	for(int fst_row=1,c=57;fst_row<=9;fst_row++,c--)
+		now_seat[fst_row][0]=c;
+	for(int i=1;i<row;i++){
+		for(int j=1;j<col;j++){
+			now_seat[i][j]='-';
+		}                                     //case a 的座位表 顯示 9*9 的座位 
+	}
+	while(count<10){
+		int rand_r=rand()%10,rand_c=rand()%10;
+		if(rand_r!=0 && rand_c!=0){
+            if(now_seat[rand_r][rand_c]!='*'){
+			now_seat[rand_r][rand_c]='*';
+			count++;
+			}                                //case a 的座位表 * 代表有人選了 
+        }	
+	}
+while(1){
+	puts("--------[BookingSystem]--------");
+    puts("|    a. Available seats       |");
+    puts("|    b. Arrange for you       |");
+    puts("|    c. Choose by yourself    |");
+    puts("|    d. Exit                  |");
+    puts("-------------------------------");            // 出現選單 
+    printf("What Do You Want:" );
+    fflush(stdin);
+    scanf("%c",&etr);
+        switch(etr)
+    {
+        case 'a':
+        case 'A':
+            for(int a=0;a<10;a++){
+		for(int b=0;b<10;b++){
+			printf(" %c",now_seat[a][b]);      //按 A a 顯示現有座位 
+		}
+		printf("\n");
+	}
+            system("pause");
+            system("cls");
+            break;
+        case 'b':
+        case 'B':
+        	quetion5(now_seat);
+            system("cls");
+        	break;                   // 按 b B 詢問要幾個位子 系統幫選 不滿意會回到主選單直到滿意 
+        case 'c':
+        case 'C':
+        	q6_seat(now_seat);
+        	system("pause");
+        	system("CLS");
+        	break;                 // 按 C c 輸入使用者要的座位 
+    	case 'd':
+    	case 'D':
+    		ret=0;
+    		fflush(stdin);
+    		printf("Continue(Y/N):");    // 按 D d 詢問是否重新輸入 
+			while(ret<1){
+				q6=quetion7();
+				if(q6==1){
+    				ret++;
+    				system("cls");
+					}
+				else if(q6==2)
+    				return 0;
+				else
+					ret=0;
+				}
+				break;
+		default:
+			printf("I DON'T KNOW WHAT ARE YOU SAY\nENTER AGAIN\n");
+			system("pause");
+			system("cls");        // 輸入其他按鍵 清除螢幕 
+}
+}
+}
+
+void quetion5(int now_seat[][col]){
+		int e=0,q5_r,q5_c,q5_count=0,stop=0,yn=0,fuck=0;
+        char sat,s;                                       // 宣告變數 字串 
+	for(int q5=0;q5<1;q5++){   
+	printf("請問要幾個位子:");         // case b 詢問需要幾個位 
+    do{
+    fuck=0;
+    fflush(stdin);
+	scanf("%d",&e);
+	if(e==1){
+        do{
+        stop=0;
+        while(q5_count<1 && stop<=no_seat){
+			q5_r=(rand()%9+1);
+			q5_c=(rand()%9+1);                                
+		if(now_seat[q5_r][q5_c]!='*'){
+			now_seat[q5_r][q5_c]='@';			       //需要一個位子的話 系統隨機篩選 且出現 @ 表示建議的座位 
+			q5_count++;                                 // 選定位子用 * 代替 @   
+        }else{
+        stop++;
+        if(stop>no_seat){
+        printf("沒位子\n");                // 沒位子了 不能選 
+        }
+        continue;                          // 用continue 回到判斷式 
+        }
+        
+        }                                     
+		seat(now_seat);                        
+        printf("滿意了嗎(y/n):");
+        fflush(stdin);
+        scanf("%c",&s);
+        if(s=='Y'||s=='y'){
+            break;
+            }
+        else if(s=='n'||s=='N'){
+            rev(now_seat);			
+            yn++;
+            q5_count=0;
+            }                       // 詢問是否滿意座位安排 不滿意系統可再排一次 
+        else{
+        printf("What???\n");
+        }
+    }while(yn<=1);
+    
+       if(s=='y'||s=='Y') 
+        fwd(now_seat);
+       if(s=='n'||s=='N'){
+        rev(now_seat);
+        printf("Ha!!!\nGO BY YOURSELF \n");      // 最多只能再安排一次  不滿意的話沒辦法 
+       }
+	}else if(e==2){
+        do{
+        stop=0;
+		while(q5_count<1 && stop<=no_seat){
+		q5_r=(rand()%9+1);
+		q5_c=(rand()%8+1);
+		if((now_seat[q5_r][(q5_c)+1]!='*') &&(now_seat[q5_r][q5_c]!='*')){   
+		now_seat[q5_r][q5_c]='@';
+		now_seat[q5_r][(q5_c)+1]='@';
+		q5_count++;	                                        // 若需要兩個位子 系統會隨機選出連續位 
+		                                                    // @ 表建議位子 選完則用 * 替代 @ 
+		}else{                                               
+        stop++;
+        if(stop>no_seat){
+        printf("沒兩人位\n");
+        }                                                 // 兩人位座滿了 沒得選 
+        continue;                                         // 用continue 回到判斷式 
+        }
+        }
+        seat(now_seat);
+        printf("滿意了嗎(y/n):");
+        fflush(stdin);
+        scanf("%c",&s);
+        if(s=='Y'||s=='y'){
+            break;
+            }
+        else if(s=='n'||s=='N'){
+            rev(now_seat);
+            yn++;
+            q5_count=0;
+            }                        //詢問是否滿意  不滿意可再隨機排  
+        else{
+        printf("What???\n");
+        }
+    }while(yn<=1);
+    
+       if(s=='y'||s=='Y'){ 
+        fwd(now_seat);
+       }
+       if(s=='n'||s=='N'){       
+       rev(now_seat);
+	   printf("Ha!!!\nGO BY YOURSELF \n");   //若還是不滿意 最多再排一次 
+	                                         // 再不滿意 沒辦法 
+       }
+	}else if(e==3){
+    do{
+    stop=0;
+    while(q5_count<1 && stop<=no_seat){
+    q5_r=(rand()%9+1);
+    q5_c=(rand()%7+1);
+    if(((now_seat[q5_r][q5_c]!='*')&&(now_seat[q5_r][(q5_c)+1]!='*'))&&(now_seat[q5_r][(q5_c)+2]!='*')){
+    now_seat[q5_r][q5_c]='@';
+    now_seat[q5_r][(q5_c)+1]='@';
+    now_seat[q5_r][(q5_c)+2]='@';
+    q5_count++;                                    // 若需要三個位子 系統會隨機選出連續位 
+    }else{                                         //用 @ 表示建議位子  選完用 * 代替 
+    stop++;
+    if(stop>no_seat){
+    printf("這列沒三人座\n");
+    }                                     // 沒有三人座了  
+    continue;                             // 用continue 回到判斷式 
+    }
+    }
+    seat(now_seat);
+        printf("滿意了嗎(y/n):");
+        fflush(stdin);
+        scanf("%c",&s);
+        if(s=='Y'||s=='y'){
+            break;
+            }
+        else if(s=='n'||s=='N'){            
+            rev(now_seat);
+			yn++;
+            q5_count=0;
+            }                                        //詢問是否滿意  不滿意可再隨機排 
+        else{                                          
+        printf("What???\n");
+        }
+    }while(yn<=1);
+    
+       if(s=='y'||s=='Y'){        
+        fwd(now_seat);
+       }
+       if(s=='n'||s=='N'){                               //若還是不滿意 最多再排一次 
+       rev(now_seat);                                       // 再不滿意 沒辦法
+       printf("Hi!!!\nGO BY YOURSELF \n!\n");
+       }
+    
+    }else if(e==4){
+   
+        
+        do{
+    stop=0;
+    while(q5_count<1 && stop<=no_seat){
+    q5_r=(rand()%8+1);
+    q5_c=(rand()%6+1);
+    if((now_seat[q5_r][q5_c]!='*')&&(now_seat[(q5_r)][(q5_c)+1]!='*')){
+        if((now_seat[q5_r][(q5_c)+2]!='*')&&(now_seat[q5_r][(q5_c)+3]!='*'))
+        {
+            now_seat[q5_r][q5_c]='@';
+            now_seat[q5_r][(q5_c)+1]='@';
+            now_seat[q5_r][(q5_c)+2]='@';
+            now_seat[q5_r][(q5_c)+3]='@';
+            q5_count++;           
+        }
+         else if((now_seat[q5_r][(q5_c)+2]='*')&&((now_seat[(q5_r)+1][q5_c]!='*')&&(now_seat[(q5_r)+1][q5_c+1]='*'))){    
+            now_seat[q5_r][q5_c]='@';
+            now_seat[q5_r][(q5_c)+1]='@';
+            now_seat[(q5_r)+1][(q5_c)]='@';
+            now_seat[(q5_r)+1][(q5_c)+1]='@';    // 若需要四個位子 系統會隨機選出連續位 // 可以連續四位一起 
+            q5_count++;                          // 用 @ 表示建議位子  選完用 * 代替    // 也可排 2*2 座位 
+        } 
+    }else{    
+    stop++;
+    if(stop>no_seat){
+    printf("no four seats in a row\n");                // 沒有四人位了 
+    }                                                  //用continue 回到判斷式 
+    continue;
+    }
+    }    
+    seat(now_seat);
+        printf("滿意了嗎(y/n):");
+        fflush(stdin);
+        scanf("%c",&s);
+        if(s=='Y'||s=='y'){
+            break;
+            
+            }
+        else if(s=='n'||s=='N'){
+           yn++;
+           q5_count=0;
+           rev(now_seat);                            //詢問是否滿意  不滿意可再隨機排  
+        }
+        else{
+        printf("What???\n");
+        }
+    }while(yn<=1);
+    
+       if(s=='y'||s=='Y'){ 
+                fwd(now_seat);
+       }
+       if(s=='n'||s=='N'){                                    
+                rev(now_seat);                                  //若還是不滿意 最多再排一次  
+       printf("Hi!!!\nGO BY YOURSELF \n");                     // 再不滿意 沒辦法 
+       }
+ 
+}else{
+printf("輸入錯誤\n");                        // 輸入其他鍵 顯示錯誤 
+printf("請輸入1~4:");                        //重新輸入  
+fuck=1;
+}
+}while(fuck==1);
+	q5_count=0;
+	system("pause");
+	system("cls");            // 若使用者滿意 清除螢幕 回選單 
+                                            
+}
+}
+
+void q6_seat(int q6[][col])
+{
+    int a=0,c=0,en=0;
+    char b=0;
+    
+    printf("輸入你要的位子(ex.2-2):");                    //case c 輸入你要的位子 自行輸入幾列幾行 
+    while(en<1){
+    en=0;
+    scanf("%d %c %d",&a, &b, &c);
+    if((a>=1&&a<=9)&&(c>=1&&c<=9)){
+        a=((a-10)*-1);
+        if(q6[a][c]!='*'){
+            q6[a][c]='@';
+            seat(q6);
+            en++;
+            q6[a][c]='*';                          // 顯示座位表及選位結果 @表示使用者的選位  *則是系統紀錄 
+        }else{
+            printf("There's already someone here\n");
+            printf("Plaese choose other seat...\n");
+            printf("Enter:");                               //重新選到 會顯示有人選  
+            }                                       
+    }else{
+    printf("Wrong Entering!\n");
+    printf("Enter again:");
+    fflush(stdin);
+    }                                           // 輸入格式有誤 會顯示輸入錯誤             
+    }
+
+}
+
+void seat(int seat[][col]){
+	for(int a=0;a<10;a++){
+		for(int b=0;b<10;b++){
+			printf(" %c",seat[a][b]);
+		}
+		printf("\n");                        //表示輸出當下的座位表 
+	}
+}
+
+
+
+
+
+
+int quetion7(){
+
+    int ret=0;
+    char ctn;
+    fflush(stdin);
+    scanf("%c",&ctn);
+    if(ctn=='y'||ctn=='Y'){
+    ret=1;
+    }else if(ctn=='n'||ctn=='N'){
+        ret=2;                                            // 詢問是否要重新輸入  
+    }else{                                                // 輸入y 回到選單 
+    printf("Wrong Enter\n");                              // 輸入 n 結束回到作業系統 
+    printf("Enter again:");
+    ret=0;                           // 按其他鍵 顯示錯誤 重新輸入 
+    }
+   return ret;
+}
+
+void rev(int rv[][col]){
+	for(int a=0;a<row;a++){
+		for(int b=0;b<=col;b++){
+			if(rv[a][b]=='@')
+			rv[a][b]='-';
+		}                                  
+	}                                             // '@' 改回 '-' 表示不滿意重選 
+}
+
+void fwd(int f[][col]){
+	for(int a=0;a<row;a++){
+		for(int b=0;b<=col;b++){
+			if(f[a][b]=='@')
+			f[a][b]='*';
+		}                                            // @ 改回 * 系統紀錄後 電腦當下改的位子 
+	}                                     
+}
+
+ //心得 :
+// 這次的功課讓我花了很多時間，一開始甚至毫無頭緒。不過經過多次嘗試、翻看老師上課的講義，才有了一點靈感。 
+// 後來就先用基本的幾個迴圈和陣列寫出前面幾題，陣列是目前學到現在稍微有點陌生的語法，希望經過多次的練習能進步許多。 
+// 雖然花了很多時間但最後終於弄出像樣的座位表，很累但很有趣。 
